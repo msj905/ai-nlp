@@ -160,12 +160,12 @@ from sklearn.datasets import load_iris,fetch_20newsgroups,load_bostn
 from sklearn.model_selection import train_test_split,GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from skleanr.metrics import classification_report
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.naive_bayes import MultinomialNB
+#from skleanr.metrics import classification_report
 import pandas as pd
 
-li = load_iris()
+#li = load_iris()
 
 def knncls():
     """
@@ -174,28 +174,26 @@ def knncls():
     """
     #读取数据
     data = pd.read_csv("./a.csv")
-
-    print(data.head())
+    #print(data.head(10))
     # 处理数据数据
     #缩小数据，查询数据
     data = data.query("x > 1.0 & x < 1.25 & y > 2.5 & y < 2.75")
-    #time
+    #time处理
     time_value = pd.to_datetime(data['time'],unit='s')
-
-    print(time_value)
-    #zhuanhuan disc
+    #print(time_value)
+    #转换成字典格式
     time_value = pd.DatetimeIndex(time_value)
 #tezheng
     data['day'] = time_value.day
     data['hour'] = time_value.hour
     data['weekday'] = time_value.weekday
-
+    #删除时间戳特征，按列删除
     data.drop(['time'],axis=1)
-
-#shaoyu n del
+    #print(data)
+#签到位置少于n的位置删除
     place_count = data.groupby('place_id').count()
     tf = place_count[place_count.row_id > 3].reset_index()
-    data = data[data['place_id'].isin(tf.place_id)
+    data = data[data['place_id'].isin(tf.place_id)]
 
     #tezheng   mubiao
 
@@ -207,31 +205,37 @@ def knncls():
     x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.25)
 
     #标准化
+    std = StandardScaler()
     x_tarin = std.fit_transform(x_train)
     x_test = std.fit_transform(x_test)
 
     #tezheng gongcheng
 
-    knn = KNeighborsClassifier(n_neighbors=5)
+    #knn = KNeighborsClassifier(n_neighbors=5)
+    knn = KNeighborsClassifier()
     #fit
-    knn.fit(x_train,y_train
+    knn.fit(x_train,y_train)
 
     #canshuzhi
     param = {"n_neighbors": [3,5,10]}
-
     #wangge
-    gc = GridSearchCV(knn,param_grid=param,cv=2)
+    gc = GridSearchCV(knn,param_grid=param,cv=10)
     gc.fit(x_train,y_train)
 
     #yuce jieguo
-
-    y_predict = knn.predict(x_test)
-    print("预测目标其拿到位置： "y_predict)
-    #
-    print("预测准确率: ",knn.score(x_test,y_test)
+    print("测试集准确率: ",gc.score(x_test,y_test)
     print("交叉验证最好结果: ", gc.best_score_)
     print("选择最好模型: ", gc.best_estimator_)
     print("每个超参数每次交叉验证的结果: ", gc.cv_results_)
+    #
+    #y_predict = knn.predict(x_test)
+    #print("预测目标签到位置： "y_predict)
+    #print("预测准确率: ",knn.score(x_test,y_test)
+
+
+
+
+
 
 if __name == "__main__":
     knncls()

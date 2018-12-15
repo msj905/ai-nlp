@@ -46,52 +46,58 @@ dot -Tpng tree.dot -o tree.png
 
 改进  剪枝（随机森林）
 """
-
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+
 import pandas as pd
 
 
 def decision():
 
-
+    #获取数据
     titan = pd.read_csv("http://")
 
-
+    #特征值和目标值
     x = [['plclass','age','sex']]
     y = ['survived']
 
 
+    #缺失值填补
+    x['age'].fillna(x['age'].mean(),inplace=True)
+
+    #数据分割
     x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.25)
 
-
+    #进行特征工程 特征  类别  one host编码
     dict = DictVrctorizer(sparse=False)
 
     x_train = dict.fit_transform(x_train.to_dict(orient="records"))
 
     print(disc.get_feture_names())
 
-    x_test = dict.fit_transform(x_train_to_dict(orient="records")
-
-#随机森林
-    rf = RandomForestClassifier()
-
-    param = {"n_estimators": [120.200,300,500,800,1200],"max_deph": [5,8,15,20,25,40]}
-
-
-
+    x_test = dict.fit_transform(x_test.to_dict(orient="records")
     #print(x_train)
     #决策树
 
-    dec = DecisionTreeClassifier()
-    dec.fit(x_train,y_train)
+#    dec = DecisionTreeClassifier(max_depth=5)
+    #dec = DecisionTreeClassifier()
+    #dec.fit(x_train,y_train)
+    #print("准确率: ",dec.score(x_test,y_test)
+    #导出机构
+    #export_graphviz(det,out_file="./",feture_names=['年龄','pclass=lst','pclass=2st','女性','男性']))
 
-    print("准确率: ",dec.score(x_test,y_test)
+    # 随机森林
+    rf = RandomForestClassifier()
 
+    param = {"n_estimators": [120.200, 300, 500, 800, 1200], "max_deph": [5, 8, 15, 20, 25, 40]}
+
+    #
+    GridSearchCV(rf,param_grid==parm,cv=10)
+    gc.fit(x_train,y_train)
+
+    print("准确率: ",gc.score(x_test,y_test)
     print("选择模型: ",gc.best_params_)
-
-    export_graphviz(det,out_file="./",feture_names=['nianling','pclass=lst']))
 
     return None
 if __name__ == "__main__":
